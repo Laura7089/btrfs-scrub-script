@@ -10,3 +10,8 @@ Adapted from [Marc Merlin's script](https://marc.merlins.org/linux/scripts/btrfs
 A `PKGBUILD` file is provided to install this as a package under Arch Linux.
 `makepkg -si` should do the trick.
 Note that the timer is not included in the package, since the user may want to adjust the timing of the script run.
+You can "install" it with:
+
+```bash
+sudo install -Dm0644 btrfs-scrub.timer /etc/systemd/system/btrfs-scrub-script.timer
+```

@@ -1,6 +1,6 @@
 pkgbase = btrfs-scrub-script
 	pkgdesc = BTRFS Regular Maintenance Script
-	pkgver = 0.1
+	pkgver = 0.2.0
 	pkgrel = 1
 	url = https://github.com/Laura7089/btrfs-scrub-script
 	arch = any
