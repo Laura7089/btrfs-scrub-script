@@ -9,8 +9,11 @@ which btrfs >/dev/null || exit 0
 export PATH="/usr/local/bin:/sbin:$PATH"
 
 # bash shortcut for `basename $0`
-PROG=${0##*/}
-lock="/var/run/$PROG"
+LOCK="/var/run/btrfs-scrub.lock"
+
+with_lock() {
+    flock --nonblock "$LOCK" "$@"
+}
 
 test_battery() {
     ON_BATTERY=0
@@ -24,17 +27,9 @@ test_battery() {
 
 test_battery
 
-# shlock (from inn) does the right thing and grabs a lock for a dead process
-# (it checks the PID in the lock file and if it's not there, it
-# updates the PID with the value given to -p)
-if ! shlock -p $$ -f "$lock"; then
-    echo "warn: $lock held, quitting"
-    exit
-fi
-
 FILTER='(^Dumping|balancing, usage)'
 BTRFS_SCRUB_SKIP="noskip"
-source /etc/btrfs_config 2>/dev/null
+
 test -n "$DEVS" || DEVS=$(grep '\<btrfs\>' /proc/mounts | awk '{ print $1 }' | sort -u | grep -v $BTRFS_SCRUB_SKIP)
 for btrfs in $DEVS
 do
@@ -48,12 +43,12 @@ do
     #btrfs balance start -musage=20 -v "$mountpoint" 2>&1 | grep -Ev "$FILTER"
     # but a null rebalance should help corner cases:
     sleep 10
-    btrfs balance start -musage=0 -v "$mountpoint" | grep -Ev "$FILTER"
+    with_lock btrfs balance start -musage=0 -v "$mountpoint" | grep -Ev "$FILTER"
     # After metadata, let's do data:
     sleep 10
-    btrfs balance start -dusage=0 -v "$mountpoint" | grep -Ev "$FILTER"
+    with_lock btrfs balance start -dusage=0 -v "$mountpoint" | grep -Ev "$FILTER"
     sleep 10
-    btrfs balance start -dusage=20 -v "$mountpoint" | grep -Ev "$FILTER"
+    with_lock btrfs balance start -dusage=20 -v "$mountpoint" | grep -Ev "$FILTER"
     # And now we do scrub. Note that scrub can fail with "no space left
     # on device" if you're very out of balance.
     test_battery
@@ -61,9 +56,9 @@ do
     echo "info: btrfs scrub start -Bd '$mountpoint'"
     # -r is read only, but won't fix a redundant array.
     #ionice -c 3 nice -10 btrfs scrub start -Bdr "$mountpoint"
-    time ionice -c 3 nice -10 btrfs scrub start -Bd "$mountpoint"
+    with_lock time ionice -c 3 nice -10 btrfs scrub start -Bd "$mountpoint"
     pkill -f 'tail -n 0 -f /var/log/syslog'
     echo "info: Ended scrub of '$mountpoint'"
 done
 
-rm "$lock"
+rm "$LOCK"
