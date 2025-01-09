@@ -1,0 +1,9 @@
+[Unit]
+Description=Scrub and balance BTRFS volumes weekly
+
+[Timer]
+OnUnitActiveSec=1w
+
+[Install]
+WantedBy=timers.target
+

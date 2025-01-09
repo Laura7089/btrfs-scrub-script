@@ -1,0 +1,18 @@
+pkgbase = btrfs-scrub-script
+	pkgdesc = BTRFS Regular Maintenance Script
+	pkgver = 0.1
+	pkgrel = 1
+	url = https://github.com/Laura7089/btrfs-scrub-script
+	arch = any
+	license = Apache-2.0
+	depends = bash
+	depends = btrfs-progs
+	depends = inn
+	provides = btrfs-scrub-script
+	conflicts = btrfs-scrub-script
+	source = btrfs-scrub.sh
+	source = btrfs-scrub.service
+	sha256sums = df4f7aa95a80c01fd6ce318fc46b95600e5d61bf3b279328eb4b629160cab84c
+	sha256sums = 5ff71f035858ee9531ef51ccb64b398e8f28051c8ba25188b9e09b3f0ea5e2c9
+
+pkgname = btrfs-scrub-script
