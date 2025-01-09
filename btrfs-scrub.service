@@ -1,0 +1,7 @@
+[Unit]
+Description=Run scrub and balance on mounted BTRFS filesystems
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/btrfs-scrub-script
+
