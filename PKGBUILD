@@ -1,12 +1,12 @@
 # Maintainer: Laura Demkowicz-Duffy <dev [at] demkowiczduffy [dot] co [dot] uk>
 pkgname=btrfs-scrub-script
 pkgver=0.5.0
-pkgrel=1
+pkgrel=2
 pkgdesc="BTRFS Regular Maintenance Script"
 arch=('any')
 url="https://github.com/Laura7089/btrfs-scrub-script"
 license=('Apache-2.0')
-depends=('bash' 'btrfs-progs' 'util-linux' 'upower')
+depends=('bash' 'btrfs-progs' 'util-linux' 'upower' 'time')
 provides=('btrfs-scrub-script')
 conflicts=('btrfs-scrub-script')
 source=("btrfs-scrub.sh"
